@@ -24,9 +24,3 @@ mozesz zrobic cos takiego aby polecenie mvn clean install budowalo paczke JAR kt
 uwaga: nalezy unikac ifologii i uzywac jacksonowych adnotacji do mopowania dziedziczenia, klasy maja zawierac tylko potrzebne rzeczy!
 
 
-posiadam implementacje 3 figur square , circle , rectangle ktore posiadaja swoje zmienne ,
-posiadam serwis Shape ktory posiada dwie metody oblicz obwod i pole
-posiadam metode ktora znajduje figure z najwiekszym polem
-posiadam metode ktora znajduje najwiekszy obwod argument to lista i typ
-export listy figur do json file , json zawiera rowniez type
-import listy figur z json do listy
