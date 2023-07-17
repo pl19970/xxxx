@@ -1,6 +1,8 @@
 package service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -12,17 +14,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Paths;
+import java.util.*;
 
 
 import static org.junit.Assert.*;
@@ -47,7 +45,8 @@ public class ShapeServiceTest {
     private Square square;
 
     private String PATH = "src/main/resources/obj.json";
-
+    FileSystem fileSystem;
+    String fileName;
 
     @Before
     public void init() {
@@ -59,34 +58,29 @@ public class ShapeServiceTest {
         rectangle = shapeFactory.createRectangle(4, 5);
         square = shapeFactory.createSquare(4);
         shapeList = new ArrayList<>(List.of(circle, rectangle, square));
+        fileSystem = Jimfs.newFileSystem(Configuration.windows());
+        fileName = "test.json";
     }
+
+
 
     @Test
-    public void jimfs() throws Exception {
+    public void test() throws URISyntaxException, IOException {
+        Path resourceFilePath = fileSystem.getPath("test.json");
+        Files.copy(getResourceFilePath(), resourceFilePath);
 
-        FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix());
-        String fileName = "test.json";
-        Path pathToStore = fileSystem.getPath("");
-
-        fileRepository.create(pathToStore, fileName);
-
-        assertTrue(Files.exists(pathToStore.resolve(fileName)));
-
-        Path createdFilePath = pathToStore.resolve(fileName);
-
-        assertTrue(Files.exists(createdFilePath));
-        assertTrue(Files.isRegularFile(createdFilePath));
-
-        shapeService.exportShapes(shapeList, createdFilePath.toString());
-
-
-        String fileContent = fileRepository.read(createdFilePath);
-        System.out.println(fileContent);
+        shapeService.exportShapes(shapeList, getResourceFilePath().toString());
+        String content = fileRepository.read(resourceFilePath);
         ObjectMapper objectMapper = new ObjectMapper();
-        String expectedContent = objectMapper.writeValueAsString(shapeList);
-        assertEquals(expectedContent, fileContent);
+        String jsonString = objectMapper.writerFor(new TypeReference<List<Shape>>() {}).writeValueAsString(shapeList);
 
 
+        assertEquals(jsonString, content);
     }
 
+
+
+    private Path getResourceFilePath() throws URISyntaxException {
+        return Paths.get(getClass().getClassLoader().getResource("test.json").toURI());
+    }
 }
