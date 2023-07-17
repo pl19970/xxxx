@@ -65,13 +65,13 @@ public class ShapeServiceTest {
     public void qweqwe() throws Exception {
 
         FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix());
-        Path directory = fileSystem.getPath("/target");
-        Path file = directory.resolve("test.json");
+        String fileName = "newFile.txt";
+        Path pathToStore = fileSystem.getPath("");
 
-        Files.createDirectory(directory);
-        Files.createFile(file);
+        fileRepository.create(pathToStore, fileName);
 
-/*
+        assertTrue(Files.exists(pathToStore.resolve(fileName)));
+
         Path createdFilePath = pathToStore.resolve(fileName);
 
         assertTrue(Files.exists(createdFilePath));
@@ -84,10 +84,9 @@ public class ShapeServiceTest {
         System.out.println(fileContent);
         ObjectMapper objectMapper = new ObjectMapper();
         String expectedContent = objectMapper.writeValueAsString(shapeList);
-       // assertEquals(expectedContent, fileContent);
-        System.out.println(expectedContent);
+        assertEquals(expectedContent, fileContent);
 
- */
+
     }
 
 }
