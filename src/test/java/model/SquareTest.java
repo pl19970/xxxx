@@ -7,11 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import service.ShapeFactory;
-import service.ShapeService;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,13 +22,10 @@ public class SquareTest {
 
     private ShapeFactory shapeFactory;
 
-    private ShapeService shapeService;
-
     double side;
 
     @Before
     public void init() {
-        shapeService = new ShapeService();
         cached = Mockito.mock(Map.class);
         shapeFactory = new ShapeFactory(cached);
         side = 5D;
@@ -37,21 +33,34 @@ public class SquareTest {
     }
 
     @Test
-    public void test() {
+    public void testCacheCalledInsteadOfCreatingObject() {
+
+        String key = "Square_" + side;
+
+        when(cached.containsKey(key)).thenReturn(true);
+
+        Square squareVerify = shapeFactory.createSquare(side);
+
+        verify(cached, never()).put(key, squareVerify);
+    }
+
+
+    @Test
+    public void verifyCacheContainsKeyCalledOnceForCircle() {
         when(cached.containsKey("Square_" + side)).thenReturn(true);
 
         verify(cached , times(1)).containsKey("Square_" + side);
     }
 
     @Test
-    public void test2() {
+    public void verifyCacheGetCalledOnceForCircle() {
         cached.get("Square_" + side);
 
         verify(cached , times(1)).get("Square_" + side);
     }
 
     @Test
-    public void test3() {
+    public void testCachePutCalledForCreatingCircle() {
         double sideSquare = 6D;
 
         Square squarePut = shapeFactory.createSquare(sideSquare);

@@ -7,12 +7,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import service.ShapeFactory;
-import service.ShapeService;
+import service.FileShapeHandler;
 
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RectangleTest {
@@ -23,7 +23,6 @@ public class RectangleTest {
 
     private ShapeFactory shapeFactory;
 
-    private ShapeService shapeService;
 
     private double length;
 
@@ -32,7 +31,6 @@ public class RectangleTest {
 
     @Before
     public void init() {
-        shapeService = new ShapeService();
         cached = Mockito.mock(Map.class);
         shapeFactory = new ShapeFactory(cached);
         length = 5D;
@@ -41,14 +39,27 @@ public class RectangleTest {
     }
 
     @Test
-    public void testingInteractionCacheContainsKey() {
+    public void testCacheCalledInsteadOfCreatingObject() {
+        String key = "Rectangle_" + length +"_" + width;
+
+        when(cached.containsKey(key)).thenReturn(true);
+
+        Rectangle rectangleVerify = shapeFactory.createRectangle(length , width);
+
+        verify(cached, never()).put(key, rectangleVerify);
+    }
+
+
+
+    @Test
+    public void verifyCacheContainsKeyCalledOnceForCircle() {
         Mockito.when(cached.containsKey("Rectangle_" + length + "_" + width)).thenReturn(true);
 
         verify(cached , Mockito.times(1)).containsKey("Rectangle_" + length + "_" + width);
     }
 
     @Test
-    public void testing1() {
+    public void verifyCacheGetCalledTwiceForCircle() {
         cached.get("Rectangle_" + length + "_" + width);
         cached.get("Rectangle_" + length + "_" + width);
 
@@ -56,7 +67,7 @@ public class RectangleTest {
     }
 
     @Test
-    public void testing2() {
+    public void testCachePutCalledForCreatingCircle() {
         double lengthRectangle = 8D;
         Rectangle rectanglePut = shapeFactory.createRectangle(lengthRectangle , width);
 

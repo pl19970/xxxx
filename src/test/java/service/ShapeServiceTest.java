@@ -1,97 +1,65 @@
 package service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Jimfs;
 import interfaces.Shape;
 import model.Circle;
 import model.Rectangle;
 import model.Square;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-import java.io.*;
-import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+ public class ShapeServiceTest {
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-public class ShapeServiceTest {
-
-
-    private FileRepository fileRepository;
-
-    private FileSystem fileSystem;
-
-    private String fileName;
-    private Path pathToStore;
-
-    private ShapeService shapeService;
-
-    private ShapeFactory shapeFactory;
-
-    private Map<String, Shape> cached;
-
-    private List<Shape> shapeList;
 
     private Circle circle;
+
+    private Circle secondCircle;
 
     private Rectangle rectangle;
 
     private Square square;
 
+    private ShapeFactory shapeFactory;
+
+    private ShapeService shapeService;
+
+    private Map<String , Shape> cached;
+
+    List<Shape> shapes;
+
 
     @Before
     public void init() {
         cached = new HashMap<>();
-
-        shapeService = new ShapeService();
         shapeFactory = new ShapeFactory(cached);
-        circle = shapeFactory.createCircle(3);
-        rectangle = shapeFactory.createRectangle(4, 5);
-        square = shapeFactory.createSquare(4);
-        shapeList = new ArrayList<>(List.of(circle, rectangle, square));
+        shapeService = new ShapeService();
 
+        circle = shapeFactory.createCircle(4);
+        secondCircle = shapeFactory.createCircle(5);
+        rectangle = shapeFactory.createRectangle(4 , 5);
+        square = shapeFactory.createSquare(10);
 
-        fileRepository = new FileRepository();
-        fileSystem = Jimfs.newFileSystem(Configuration.windows());
-        fileName = "shapes.json";
-        pathToStore = fileSystem.getPath("");
-        fileRepository.create(pathToStore, fileName);
+        shapes = new ArrayList<>(List.of(circle , secondCircle , rectangle ,square));
     }
 
 
     @Test
-    public void test() throws JsonProcessingException {
-        shapeService.exportShapes(shapeList, fileName);
-        assertTrue(Files.exists(pathToStore));
+    public void shouldReturnMostShape() {
+        Shape result = shapeService.getFigureMostArea(shapes);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        String jsonString = objectMapper.writerFor(new TypeReference<List<Shape>>() {
-        }).writeValueAsString(shapeList);
-
-        String jsonExpected = "[{\"type\":\"circle\",\"radius\":3.0},{\"type\":\"rectangle\",\"length\":4.0,\"width\":5.0},{\"type\":\"square\",\"side\":4.0}]";
-
-        assertEquals(jsonExpected, jsonString);
-
+        assertEquals(square , result);
     }
 
     @Test
-    public void testy() {
-        long actual = shapeService.importShapes(fileName).size();
+    public void shouldReturnMostPerimeterWithGivenType() {
+        Shape result = shapeService.getFigureMostPerimeterAndType(shapes , "circle");
 
-        assertEquals(3 , actual);
+        assertEquals(secondCircle , result);
     }
 
 }
