@@ -63,7 +63,6 @@ public class ShapeServiceTest {
     }
 
 
-
     @Test
     public void test() throws URISyntaxException, IOException {
         Path resourceFilePath = fileSystem.getPath("test.json");
@@ -72,12 +71,19 @@ public class ShapeServiceTest {
         shapeService.exportShapes(shapeList, getResourceFilePath().toString());
         String content = fileRepository.read(resourceFilePath);
         ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = objectMapper.writerFor(new TypeReference<List<Shape>>() {}).writeValueAsString(shapeList);
+        String jsonString = objectMapper.writerFor(new TypeReference<List<Shape>>() {
+        }).writeValueAsString(shapeList);
 
 
         assertEquals(jsonString, content);
     }
 
+    @Test
+    public void test1() throws URISyntaxException {
+        long result = shapeService.importShapes(getResourceFilePath().toString()).size();
+
+        assertEquals(3, result);
+    }
 
 
     private Path getResourceFilePath() throws URISyntaxException {

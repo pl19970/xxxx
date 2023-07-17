@@ -4,6 +4,7 @@ package service;
 import interfaces.Shape;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import model.Circle;
 import model.Rectangle;
 import model.Square;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 @Getter
 @Setter
+@ToString
 public class ShapeFactory {
 
     private  Map<String, Shape> cache = new HashMap<>();
@@ -22,7 +24,6 @@ public class ShapeFactory {
 
     public  Circle createCircle(double radius) {
         String key = "Circle_" + radius;
-
         if (cache.containsKey(key)) {
             return (Circle) cache.get(key);
         }
