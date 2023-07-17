@@ -37,7 +37,7 @@ public class ShapeService {
 
     public  void exportShapes(List<Shape> shapes, String filePath) {
         try {
-            objectMapper.writerWithType(new TypeReference<List<Shape>>() {
+            objectMapper.writerFor(new TypeReference<List<Shape>>() {
             }).writeValue(new File(filePath), shapes);
         } catch (IOException e) {
             e.printStackTrace();
