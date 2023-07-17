@@ -62,12 +62,13 @@ public class ShapeServiceTest {
 
 
     @Test
-    public void test() throws IOException {
+    public void test() {
         FileSystem fileSystem = Jimfs.newFileSystem(Configuration.windows());
-        String fileName = "test.json";
+        String fileName = "shapes.json";
         Path pathToStore = fileSystem.getPath("");
         fileRepository.create(pathToStore, fileName);
 
+        shapeService.exportShapes(shapeList , fileName );
         assertTrue(Files.exists(pathToStore));
     }
 
