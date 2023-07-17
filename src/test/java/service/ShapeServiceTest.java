@@ -65,7 +65,7 @@ public class ShapeServiceTest {
     public void qweqwe() throws Exception {
 
         FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix());
-        String fileName = "newFile.txt";
+        String fileName = "test.json";
         Path pathToStore = fileSystem.getPath("");
 
         fileRepository.create(pathToStore, fileName);
