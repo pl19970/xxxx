@@ -89,7 +89,9 @@ public class ShapeServiceTest {
 
     @Test
     public void testy() {
+        long actual = shapeService.importShapes(fileName).size();
 
+        assertEquals(3 , actual);
     }
 
 }
