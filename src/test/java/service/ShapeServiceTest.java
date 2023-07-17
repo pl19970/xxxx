@@ -62,7 +62,7 @@ public class ShapeServiceTest {
     }
 
     @Test
-    public void qweqwe() throws Exception {
+    public void jimfs() throws Exception {
 
         FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix());
         String fileName = "test.json";
